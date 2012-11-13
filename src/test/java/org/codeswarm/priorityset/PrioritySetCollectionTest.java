@@ -44,7 +44,7 @@ class IntegerStringPrioritySetTestCollectionGenerator implements TestCollectionG
 
     @Override
     public SampleElements<String> samples() {
-        return new SampleElements<String>("12", "6", "5", "-3", "99");
+        return Samples.INTEGER_STRINGS;
     }
 
     @Override

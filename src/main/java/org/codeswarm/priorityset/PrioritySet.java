@@ -69,8 +69,8 @@ public class PrioritySet<T, P> extends AbstractCollection<T> {
      * Constructs an empty {@link PrioritySet} that uses
      * the natural ordering of {@link T} and {@link P}.
      */
-    public static <T extends Comparator<T>, P extends Comparator<P>>
-    PrioritySet<T, P> newPrioritySet() {
+    public static <T extends Comparable<T>, P extends Comparable<P>>
+            PrioritySet<T, P> newPrioritySet() {
 
         return new PrioritySet<T, P>(null, null);
     }
@@ -128,6 +128,8 @@ public class PrioritySet<T, P> extends AbstractCollection<T> {
      *   priority was already equal to {@code priority}.
      */
     public P setPriority(T element, P priority) {
+        if (element == null) throw new NullPointerException("element is null");
+        if (priority == null) throw new NullPointerException("priority is null");
         P previousPriority = null;
         Node<T, P> node = hashMap.get(element);
         if (node != null) {
@@ -158,6 +160,7 @@ public class PrioritySet<T, P> extends AbstractCollection<T> {
      */
     @Override
     public boolean remove(Object element) {
+        if (element == null) throw new NullPointerException();
         Node<T, P> node = hashMap.remove(element);
         boolean modified = node != null;
         if (modified) {
@@ -229,6 +232,7 @@ public class PrioritySet<T, P> extends AbstractCollection<T> {
      *   {@code null} if {@code element} does not belong to this set.
      */
     public @Nullable P getPriority(T element) {
+        if (element == null) throw new NullPointerException();
         Node<T, P> node = hashMap.get(element);
         return node != null ? node.priority : null;
     }
@@ -240,6 +244,7 @@ public class PrioritySet<T, P> extends AbstractCollection<T> {
      */
     @Override
     public boolean contains(Object element) {
+        if (element == null) throw new NullPointerException();
         return hashMap.containsKey(element);
     }
 
@@ -304,12 +309,8 @@ final class Node<T, P> {
     final P priority;
 
     Node(T element, P priority) {
-        if (element == null) {
-            throw new NullPointerException();
-        }
-        if (priority == null) {
-            throw new NullPointerException();
-        }
+        if (element == null) throw new NullPointerException();
+        if (priority == null) throw new NullPointerException();
         this.element = element;
         this.priority = priority;
     }
@@ -349,7 +350,8 @@ final class MapView<T, P> extends AbstractMap<T, P> {
 
     @Override
     public P get(Object key) {
-        return prioritySet.hashMap.get(key).priority;
+        Node<T, P> node = prioritySet.hashMap.get(key);
+        return node != null ? node.priority : null;
     }
 
     @Override
@@ -372,11 +374,6 @@ final class MapView<T, P> extends AbstractMap<T, P> {
     @Override
     public int size() {
         return prioritySet.size();
-    }
-
-    @Override
-    public boolean containsValue(Object value) {
-        return prioritySet.hashMap.containsValue(value);
     }
 
     @Override
@@ -408,6 +405,7 @@ final class MapViewEntrySet<T, P> extends AbstractSet<Entry<T, P>> {
 
     @Override
     public boolean contains(Object o) {
+        if (o == null) return false;
         Map.Entry entry = (Entry) o;
         return prioritySet.contains(entry.getKey());
     }
@@ -419,6 +417,7 @@ final class MapViewEntrySet<T, P> extends AbstractSet<Entry<T, P>> {
 
     @Override
     public boolean remove(Object o) {
+        if (o == null) return false;
         Map.Entry entry = (Entry) o;
         return prioritySet.remove(entry.getKey());
     }
@@ -498,6 +497,11 @@ final class NodeEntry<T, P> implements Entry<T, P> {
     @Override
     public int hashCode() {
         return node.element.hashCode() ^ node.priority.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s=%s", getKey().toString(), getKey().toString());
     }
 
 }

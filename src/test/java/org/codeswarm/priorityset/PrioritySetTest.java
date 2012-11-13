@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Map;
 
 import static junit.framework.Assert.*;
 import static org.codeswarm.priorityset.PrioritySetBuilder.prioritySetBuilder;
@@ -416,12 +417,68 @@ public class PrioritySetTest {
         set.setPriority("four", null);
     }
 
+    /**
+     * The elements must implement {@link Comparable}
+     * if no {@link Comparator} is used.
+     */
     @Test(expected = ClassCastException.class)
     public void testNotComparableElement() {
         PrioritySetBuilder<Object, Integer> builder = prioritySetBuilder();
         PrioritySet<Object, Integer> set = builder.build();
         set.setPriority(new Object(), 5);
         set.setPriority(new Object(), 5);
+    }
+
+    /**
+     * {@link Iterator#remove() Removing} from the
+     * {@link PrioritySet#asMap() map}'s {@link Map#entrySet() entry set}
+     * iterator removes from the priority set.
+     */
+    @Test
+    public void testMapIteratorRemove() {
+        PrioritySetBuilder<String, Integer> builder = prioritySetBuilder();
+        PrioritySet<String, Integer> set = builder.build();
+
+        set.setPriority("two", 2);
+        set.setPriority("three", 3);
+        set.setPriority("one", 1);
+
+        {
+            Iterator<Map.Entry<String, Integer>> it = set.asMap().entrySet().iterator();
+            it.next();
+            it.next();
+            it.remove();
+        }
+        Iterator<String> it = set.iterator();
+        assertThat(it.next(), equalTo("one"));
+        assertThat(it.next(), equalTo("three"));
+        assertFalse(it.hasNext());
+    }
+
+    /**
+     * {@link Iterator#remove() Removing} from the
+     * {@link PrioritySet#asSet() set}'s iterator
+     * removes from the priority set.
+     */
+    @Test
+    public void testSetIteratorRemove() {
+        PrioritySetBuilder<String, Integer> builder = prioritySetBuilder();
+        PrioritySet<String, Integer> set = builder.build();
+
+        set.setPriority("two", 2);
+        set.setPriority("three", 3);
+        set.setPriority("one", 1);
+
+        {
+            Iterator<String> it = set.asSet().iterator();
+            it.next();
+            it.next();
+            it.remove();
+        }
+        Iterator<String> it = set.iterator();
+        assertThat(it.next(), equalTo("one"));
+        assertThat(it.next(), equalTo("three"));
+        assertFalse(it.hasNext());
     }
 
 }
