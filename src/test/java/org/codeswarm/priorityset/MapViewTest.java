@@ -35,7 +35,7 @@ class IntegerStringMapViewTestSetGenerator implements TestMapGenerator<String, I
 
     @Override
     public MapView<String, Integer> create(Object ... objects) {
-        PrioritySet<String, Integer> prioritySet = new PrioritySet<String, Integer>(null, null);
+        PrioritySet<String, Integer> prioritySet = new PrioritySet<String, Integer>(null, null, null);
         for (Object o : objects) {
             Map.Entry<String, Integer> entry = (Map.Entry) o;
             prioritySet.setPriority(entry.getKey(), entry.getValue());

@@ -506,4 +506,42 @@ public class PrioritySetTest {
         assertThat(set.toString(), equalTo("[abc=4, def=6]"));
     }
 
+    @Test
+    public void testDefaultPriority1() {
+        PrioritySetBuilder<String, Integer> builder = prioritySetBuilder();
+        builder.withDefaultPriority(7);
+        PrioritySet<String, Integer> set = builder.build();
+        set.add("abc");
+        assertThat(set.getPriority("abc"), equalTo(7));
+    }
+
+    @Test
+    public void testDefaultPriority2() {
+        PrioritySetBuilder<String, Integer> builder = prioritySetBuilder();
+        builder.withDefaultPriority(7);
+        PrioritySet<String, Integer> set = builder.build();
+        set.setPriority("abc", 5);
+        assertThat(set.getPriority("abc"), equalTo(5));
+    }
+
+    @Test
+    public void testDefaultPriority3() {
+        PrioritySetBuilder<String, Integer> builder = prioritySetBuilder();
+        builder.withDefaultPriority(7);
+        PrioritySet<String, Integer> set = builder.build();
+        set.add("abs");
+        set.setPriority("abc", 5);
+        assertThat(set.getPriority("abc"), equalTo(5));
+    }
+
+    @Test
+    public void testDefaultPriority4() {
+        PrioritySetBuilder<String, Integer> builder = prioritySetBuilder();
+        builder.withDefaultPriority(7);
+        PrioritySet<String, Integer> set = builder.build();
+        set.setPriority("abc", 5);
+        set.add("abs");
+        assertThat(set.getPriority("abc"), equalTo(5));
+    }
+
 }

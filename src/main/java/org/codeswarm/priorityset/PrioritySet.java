@@ -49,7 +49,7 @@ import javax.annotation.Nullable;
  *
  *   If {@link T} does not extend {@link Comparable Comparable&lt;T&gt;},
  *   then a {@link Comparator Comparator&lt;T&gt;} must be provided to the
- *   {@link #PrioritySet(Comparator, Comparator) PrioritySet constructor}
+ *   {@link #PrioritySet(Object, Comparator, Comparator) PrioritySet constructor}
  *   (see also: {@link PrioritySetBuilder#withElementComparator(Comparator)}).
  *   This is required for a well-defined {@link #iterator() iteration} order
  *   in the case where multiple elements have the same priority.
@@ -63,12 +63,13 @@ import javax.annotation.Nullable;
  *   foremost by the elements' priorities, in ascending order.
  *   If {@link P} does not extend {@link Comparable Comparable&lt;P&gt;},
  *   then a {@link Comparator Comparator&lt;P&gt;} must be provided to the
- *   {@link #PrioritySet(Comparator, Comparator) PrioritySet constructor}
+ *   {@link #PrioritySet(Object, Comparator, Comparator) PrioritySet constructor}
  *   (see also: {@link PrioritySetBuilder#withPriorityComparator(Comparator)}).
  *   Comparison must be consistent with {@link Object#equals(Object) equals}.</p>
  */
 public class PrioritySet<T, P> extends AbstractCollection<T> {
 
+    final P defaultPriority;
     final HashMap<T, Node<T, P>> hashMap;
     final TreeSet<Node<T, P>> treeSet;
     SetView<T> setView;
@@ -81,11 +82,16 @@ public class PrioritySet<T, P> extends AbstractCollection<T> {
     public static <T extends Comparable<T>, P extends Comparable<P>>
             PrioritySet<T, P> newPrioritySet() {
 
-        return new PrioritySet<T, P>(null, null);
+        return new PrioritySet<T, P>(null, null, null);
     }
 
     /**
      * Constructs an empty {@link PrioritySet}.
+     *
+     * @param defaultPriority
+     *
+     *   The default priority for new elements added via {@link #add(Object)}.
+     *   If {@code null}, then {@link #add(Object)} throws {@link UnsupportedOperationException}.
      *
      * @param elementComparator
      *
@@ -106,8 +112,11 @@ public class PrioritySet<T, P> extends AbstractCollection<T> {
      *   Comparison must be consistent with {@link Object#equals(Object) equals}.
      */
     public PrioritySet(
-        @Nullable Comparator<T> elementComparator,
-        @Nullable Comparator<P> priorityComparator) {
+            @Nullable P defaultPriority,
+            @Nullable Comparator<T> elementComparator,
+            @Nullable Comparator<P> priorityComparator) {
+
+        this.defaultPriority = defaultPriority;
 
         hashMap = new HashMap<T, Node<T, P>>();
 
@@ -115,6 +124,29 @@ public class PrioritySet<T, P> extends AbstractCollection<T> {
             new NodeComparator<T, P>(elementComparator, priorityComparator);
 
         treeSet = new TreeSet<Node<T, P>>(nodeComparator);
+    }
+
+    /**
+     * If {@code element} does not belong to the set, adds it
+     * with the default priority and returns true.
+     * Otherwise, does nothing and returns false.
+     *
+     * @throws UnsupportedOperationException
+     *
+     *   If no {@code defaultPriority} argument was provided to the
+     *   {@link #PrioritySet(Object, Comparator, Comparator) constructor}.
+     */
+    @Override
+    public boolean add(T element) {
+        if (defaultPriority == null) {
+            throw new UnsupportedOperationException(
+                "add(T) is unsupported because no defaultPriority was given");
+        } else if (contains(element)) {
+            return false;
+        } else {
+            setPriority(element, defaultPriority);
+            return true;
+        }
     }
 
     /**
