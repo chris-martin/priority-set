@@ -1,5 +1,6 @@
 package org.codeswarm.priorityset;
 
+import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 
 import java.util.Comparator;
@@ -479,6 +480,30 @@ public class PrioritySetTest {
         assertThat(it.next(), equalTo("one"));
         assertThat(it.next(), equalTo("three"));
         assertFalse(it.hasNext());
+    }
+
+    @Test
+    public void testToStringEmpty() {
+        PrioritySetBuilder<String, Integer> builder = prioritySetBuilder();
+        PrioritySet<String, Integer> set = builder.build();
+        assertThat(set.toString(), equalTo("[]"));
+    }
+
+    @Test
+    public void testToStringOne() {
+        PrioritySetBuilder<String, Integer> builder = prioritySetBuilder();
+        PrioritySet<String, Integer> set = builder.build();
+        set.setPriority("abc", 4);
+        assertThat(set.toString(), equalTo("[abc=4]"));
+    }
+
+    @Test
+    public void testToStringTwo() {
+        PrioritySetBuilder<String, Integer> builder = prioritySetBuilder();
+        PrioritySet<String, Integer> set = builder.build();
+        set.setPriority("abc", 4);
+        set.setPriority("def", 6);
+        assertThat(set.toString(), equalTo("[abc=4, def=6]"));
     }
 
 }

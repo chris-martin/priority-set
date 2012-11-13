@@ -22,6 +22,7 @@ public class PrioritySetCollectionTest {
                 CollectionFeature.KNOWN_ORDER,
                 CollectionFeature.REMOVE_OPERATIONS,
                 CollectionFeature.FAILS_FAST_ON_CONCURRENT_MODIFICATION,
+                CollectionFeature.NON_STANDARD_TOSTRING,
                 CollectionSize.ANY
             )
             .createTestSuite();

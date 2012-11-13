@@ -1,8 +1,17 @@
 package org.codeswarm.priorityset;
 
-import javax.annotation.Nullable;
-import java.util.*;
+import java.util.AbstractCollection;
+import java.util.AbstractMap;
+import java.util.AbstractSet;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.annotation.Nullable;
 
 /**
  * A mutable collection of elements ordered by priorities.
@@ -301,6 +310,11 @@ public class PrioritySet<T, P> extends AbstractCollection<T> {
         return treeSet.hashCode();
     }
 
+    @Override
+    public String toString() {
+        return treeSet.toString();
+    }
+
 }
 
 final class Node<T, P> {
@@ -326,6 +340,11 @@ final class Node<T, P> {
     @Override
     public int hashCode() {
         return 31 * element.hashCode() + priority.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s=%s", element.toString(), priority.toString());
     }
 
 }
