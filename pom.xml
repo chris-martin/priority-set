@@ -6,7 +6,7 @@
 
   <groupId>org.codeswarm</groupId>
   <artifactId>priority-set</artifactId>
-  <version>1.0</version>
+  <version>1.1-SNAPSHOT</version>
 
   <name>Priority Set</name>
   <description>
