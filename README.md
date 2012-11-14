@@ -60,3 +60,18 @@ public class Demo {
     }
 }
 ```
+
+Download
+--------
+
+Priority Set is available from Maven Central.
+The latest version is 1.0.
+
+```xml
+<dependency>
+  <groupId>org.codeswarm</groupId>
+  <artifactId>priority-set</artifactId>
+  <version>1.0</version>
+</dependency>
+```
+
