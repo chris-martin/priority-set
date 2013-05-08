@@ -3,9 +3,7 @@ package org.codeswarm.priorityset;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 import static junit.framework.Assert.*;
 import static org.codeswarm.priorityset.PrioritySetBuilder.prioritySetBuilder;
@@ -542,6 +540,67 @@ public class PrioritySetTest {
         set.setPriority("abc", 5);
         set.add("abs");
         assertThat(set.getPriority("abc"), equalTo(5));
+    }
+
+    @Test
+    public void testRemoveFromEmpty() {
+        PrioritySetBuilder<String, Integer> builder = prioritySetBuilder();
+        PrioritySet<String, Integer> set = builder.build();
+        assertFalse(set.remove("apple"));
+    }
+
+    @Test
+    public void testRemoveTwice() {
+        PrioritySetBuilder<String, Integer> builder = prioritySetBuilder();
+        PrioritySet<String, Integer> set = builder.build();
+        set.setPriority("apple", 4);
+        assertTrue(set.remove("apple"));
+        assertFalse(set.remove("apple"));
+    }
+
+    @Test
+    public void testInsertTwiceRemoveTwice() {
+        PrioritySetBuilder<String, Integer> builder = prioritySetBuilder();
+        PrioritySet<String, Integer> set = builder.build();
+        set.setPriority("apple", 4);
+        set.setPriority("apple", 5);
+        assertTrue(set.remove("apple"));
+        assertFalse(set.remove("apple"));
+    }
+
+    /**
+     * Do random things, just to make sure no exceptions are thrown.
+     */
+    @Test
+    public void fuzz() {
+
+        PrioritySetBuilder<Long, Character> builder = prioritySetBuilder();
+        PrioritySet<Long, Character> prioritySet = builder.build();
+
+        Random r = new Random(70239034605412239L);
+        Set<Long> set = new HashSet<Long>();
+
+        for (int i = 0; i < 10000; i += 1) {
+            double k = r.nextDouble();
+            if (k < 0.7) {
+                Long element = r.nextLong();
+                Character priority = (char) ('a' + r.nextInt(26));
+                set.add(element);
+                prioritySet.setPriority(element, priority);
+            } else if (k < 0.8) {
+                for (Long element : prioritySet) { }
+            } else if (set.size() > 0) {
+                if (k < 0.9) {
+                    Long element = new ArrayList<Long>(set).get(r.nextInt(set.size()));
+                    set.remove(element);
+                    prioritySet.remove(element);
+                } else {
+                    Long element = prioritySet.iterator().next();
+                    prioritySet.remove(element);
+                    set.remove(element);
+                }
+            }
+        }
     }
 
 }
